@@ -1,0 +1,8 @@
+# Ignore everything outside this project
+.*
+!.gitignore
+assets/*
+projects/*
+index.html
+style.css
+script.js
