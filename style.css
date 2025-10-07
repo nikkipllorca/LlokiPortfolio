@@ -39,22 +39,29 @@ h1 { font-size: 2.5rem; margin: 0 0 8px; }
 
 .site-header p { margin: 0; color: var(--muted); }
 
-/* Content card */
+/* Center the projects card block */
 .projects {
-  margin: 40px auto;        /* centers the card */
-  max-width: 760px;         /* comfy width */
+  margin: 40px auto;
+  max-width: 760px;
   background: var(--card);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 32px 40px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  text-align: left;            /* keep text easy to read */
 }
 
-.projects h2 { font-size: 1.25rem; margin: 0 0 12px; }
+/* Center the section titles inside card */
+.projects h2 {
+  font-size: 1.25rem;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
 
+/* Lists and links */
 .project-list { list-style: none; padding: 0; margin: 0; }
 .project-list li + li { margin-top: 10px; }
 
-/* Links */
 a {
   color: var(--link);
   text-decoration: none;
@@ -63,14 +70,18 @@ a {
 a:hover, a:focus { text-decoration: underline; }
 
 /* Footer */
-.site-footer { text-align: center; color: var(--muted); padding-bottom: 48px; }
+.site-footer {
+  text-align: center;
+  color: var(--muted);
+  padding-bottom: 48px;
+}
 
 /* Form layout (same width inputs, centered form) */
 form {
   display: grid;
   gap: 12px;
   max-width: 360px;
-  margin: 0 auto;           /* centers form inside the card */
+  margin: 0 auto;              /* centers form inside card */
 }
 form input,
 form textarea {
@@ -96,6 +107,7 @@ form button:hover { opacity: 0.9; }
 @media (max-width: 520px) {
   .site-header { padding-top: 32px; }
   h1 { font-size: 2rem; }
+  .projects { padding: 24px; }
 }
 
 
