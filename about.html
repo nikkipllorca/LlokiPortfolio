@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About · lloki</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=2">
+  <link rel="apple-touch-icon" href="/favicon.png?v=2">
+
+  <!-- Basic SEO -->
+  <link rel="canonical" href="https://lloki.netlify.app/about.html">
+  <meta name="description" content="About Nikki Llorca — product-focused creative working across media, licensing, and technology.">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>About</h1>
+    <p class="muted">I’m Nikki — a product-focused creative working across media, intellectual property, and technology.</p>
+    <p>
+      <a href="/">← Home</a>
+    </p>
+  </header>
+
+  <main>
+    <section class="projects" style="padding:24px;">
+      <h2>Background</h2>
+      <p>Building habits and projects. My background spans product management, content licensing, and creative technology. This portfolio highlights practical builds — web, Bubble, and data-driven projects — plus the product thinking behind them. My background in making stuff and sharing stuff spans across radio, television, film, blogs, and software.</p>
+
+      <h2 style="margin-top:24px;">Contact</h2>
+      <form name="contact" method="POST" data-netlify="true" style="display:grid;gap:12px;max-width:560px;">
+        <label>Your name<br><input type="text" name="name" required></label>
+        <label>Email<br><input type="email" name="email" required></label>
+        <label>Message<br><textarea name="message" rows="5" required></textarea></label>
+        <button type="submit">Send</button>
+      </form>
+      <p class="muted" style="margin-top:8px;">This form is powered by Netlify — no backend needed.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <small>© <span id="year"></span> Nikki Llorca</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
