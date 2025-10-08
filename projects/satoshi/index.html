@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Satoshi’s Stocks · Manage the world’s most elusive portfolio.</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=4">
+  <link rel="apple-touch-icon" href="/favicon.png?v=4">
+  <link rel="shortcut icon" href="/favicon.png?v=4">
+
+  <link rel="stylesheet" href="satoshi.css" />
+  <link rel="preconnect" href="https://api.coingecko.com">
+  <link rel="preconnect" href="https://query1.finance.yahoo.com">
+  <meta name="description" content="Satoshi’s Stocks — a live simulator to manage 1.1M BTC against the top 50 U.S. companies by market cap. Buy and sell shares with live prices." />
+</head>
+<body>
+  <header class="site-header">
+    <div class="title-group">
+      <h1>Satoshi’s Stocks</h1>
+      <p class="tagline">Manage the world’s most elusive portfolio.</p>
+    </div>
+
+    <div class="header-actions">
+      <button id="refresh" class="btn">Refresh prices</button>
+      <button id="theme-toggle" class="btn btn-ghost" aria-pressed="false">🌗 Light</button>
+    </div>
+  </header>
+
+  <section class="status-bar">
+    <div class="pill">1 BTC = <span id="btc-usd">—</span></div>
+    <div class="pill pill-strong">Remaining: <span id="remaining-btc">—</span> BTC (<span id="remaining-usd">—</span>)</div>
+    <div class="pill">Spent: <span id="spent-btc">0</span> BTC (<span id="spent-usd">$0</span>)</div>
+    <div class="pill pill-muted">Last updated: <span id="last-updated">—</span></div>
+  </section>
+
+  <main class="grid" id="grid" aria-live="polite" aria-busy="true">
+    <!-- Cards injected by JS -->
+  </main>
+
+  <footer class="site-footer">
+    <p class="muted">For educational fun; not financial advice. Prices auto-refresh every ~10 minutes (cached client-side).</p>
+    <p class="muted" id="data-sources">Data: CoinGecko (BTC), Yahoo Finance (quotes) <span id="fallback-note" hidden>· Using snapshot fallback</span></p>
+    <p><a href="/">← Home</a> · <a href="/about.html">About</a></p>
+  </footer>
+
+  <script src="satoshi.js"></script>
+</body>
+</html>
