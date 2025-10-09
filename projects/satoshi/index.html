@@ -10,25 +10,27 @@
   <link rel="apple-touch-icon" href="/favicon.png?v=4">
   <link rel="shortcut icon" href="/favicon.png?v=4">
 
-  <link rel="stylesheet" href="satoshi.css" />
+  <link rel="stylesheet" href="satoshi.css?v=2025-10-09-1" />
   <link rel="preconnect" href="https://api.coingecko.com">
   <link rel="preconnect" href="https://query1.finance.yahoo.com">
   <meta name="description" content="Satoshi’s Stocks — a live, GitHub-styled simulator to manage 1.1M BTC against the top 50 U.S. companies. Buy and sell shares with live prices." />
 </head>
 <body>
   <header class="site-header">
+    <!-- Left: title -->
     <div class="title-group">
       <h1>Satoshi’s Stocks</h1>
       <p class="tagline">Manage the world’s most elusive portfolio.</p>
-
-      <!-- Option 1 informational block (live-updated) -->
-      <div class="holdings">
-        <div id="line-total" class="fade-on-update">Satoshi’s BTC Holdings: 1,100,000 BTC ≈ —</div>
-        <div id="line-btc" class="muted fade-on-update">1 BTC = —</div>
-        <div class="muted">Use <span id="line-usable">—</span> to invest in the top 50 S&amp;P stocks.</div>
-      </div>
     </div>
 
+    <!-- Center: holdings info (moved here on wide screens) -->
+    <div class="holdings">
+      <div id="line-total" class="fade-on-update">Satoshi’s BTC Holdings: 1,100,000 BTC ≈ —</div>
+      <div id="line-btc" class="muted fade-on-update">1 BTC = —</div>
+      <div class="muted">Use <span id="line-usable">—</span> to invest in the top 50 S&amp;P stocks.</div>
+    </div>
+
+    <!-- Right: actions -->
     <div class="header-actions">
       <button id="refresh" class="btn">Refresh prices</button>
       <button id="theme-toggle" class="btn btn-ghost" aria-pressed="false">🌗 Light</button>
@@ -50,8 +52,10 @@
       <div class="label">Last updated</div>
       <div id="last-updated">—</div>
     </div>
-    <div class="summary-cell">
-      <button id="open-receipt" class="btn btn-ghost">🧾 Print today’s receipt</button>
+    <!-- Entire cell is clickable (receipt) -->
+    <div id="receipt-cell" class="summary-cell action" role="button" tabindex="0" aria-label="Print today’s receipt">
+      <div class="label">Receipt</div>
+      <div class="action-title">🧾 Print today’s receipt</div>
     </div>
   </section>
 
@@ -87,9 +91,7 @@
             <th align="right">Line Total</th>
           </tr>
         </thead>
-        <tbody id="r-rows">
-          <!-- rows injected -->
-        </tbody>
+        <tbody id="r-rows"></tbody>
       </table>
 
       <div class="receipt-totals">
@@ -105,6 +107,7 @@
     </article>
   </dialog>
 
-  <script src="satoshi.js"></script>
+  <script src="satoshi.js?v=2025-10-09-1"></script>
 </body>
 </html>
+
