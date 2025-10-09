@@ -13,13 +13,20 @@
   <link rel="stylesheet" href="satoshi.css" />
   <link rel="preconnect" href="https://api.coingecko.com">
   <link rel="preconnect" href="https://query1.finance.yahoo.com">
-  <meta name="description" content="Satoshi’s Stocks — a live simulator to manage 1.1M BTC against the top 50 U.S. companies by market cap. Buy and sell shares with live prices." />
+  <meta name="description" content="Satoshi’s Stocks — a live, GitHub-styled simulator to manage 1.1M BTC against the top 50 U.S. companies. Buy and sell shares with live prices." />
 </head>
 <body>
   <header class="site-header">
     <div class="title-group">
       <h1>Satoshi’s Stocks</h1>
       <p class="tagline">Manage the world’s most elusive portfolio.</p>
+
+      <!-- Option 1 informational block (live-updated) -->
+      <div class="holdings">
+        <div id="line-total" class="fade-on-update">Satoshi’s BTC Holdings: 1,100,000 BTC ≈ —</div>
+        <div id="line-btc" class="muted fade-on-update">1 BTC = —</div>
+        <div class="muted">Use <span id="line-usable">—</span> to invest in the top 50 S&amp;P stocks.</div>
+      </div>
     </div>
 
     <div class="header-actions">
@@ -28,11 +35,24 @@
     </div>
   </header>
 
-  <section class="status-bar">
-    <div class="pill">1 BTC = <span id="btc-usd">—</span></div>
-    <div class="pill pill-strong">Remaining: <span id="remaining-btc">—</span> BTC (<span id="remaining-usd">—</span>)</div>
-    <div class="pill">Spent: <span id="spent-btc">0</span> BTC (<span id="spent-usd">$0</span>)</div>
-    <div class="pill pill-muted">Last updated: <span id="last-updated">—</span></div>
+  <!-- Summary bar -->
+  <section class="summary-bar">
+    <div class="summary-cell">
+      <div class="label">Top position</div>
+      <div id="top-position">—</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">BTC left</div>
+      <div id="btc-left">— BTC</div>
+      <div class="muted" id="usd-left">—</div>
+    </div>
+    <div class="summary-cell">
+      <div class="label">Last updated</div>
+      <div id="last-updated">—</div>
+    </div>
+    <div class="summary-cell">
+      <button id="open-receipt" class="btn btn-ghost">🧾 Print today’s receipt</button>
+    </div>
   </section>
 
   <main class="grid" id="grid" aria-live="polite" aria-busy="true">
@@ -44,6 +64,46 @@
     <p class="muted" id="data-sources">Data: CoinGecko (BTC), Yahoo Finance (quotes) <span id="fallback-note" hidden>· Using snapshot fallback</span></p>
     <p><a href="/">← Home</a> · <a href="/about.html">About</a></p>
   </footer>
+
+  <!-- Receipt modal -->
+  <dialog id="receipt-modal">
+    <article class="receipt">
+      <header class="receipt-header">
+        <h2>Today’s Receipt</h2>
+        <button id="close-receipt" class="btn btn-ghost">Close</button>
+      </header>
+      <div class="receipt-meta">
+        <div>Date: <span id="r-date">—</span></div>
+        <div>BTC Price: <span id="r-btc-price">—</span></div>
+      </div>
+
+      <table class="receipt-table">
+        <thead>
+          <tr>
+            <th align="left">Ticker</th>
+            <th align="left">Company</th>
+            <th align="right">Shares</th>
+            <th align="right">Price</th>
+            <th align="right">Line Total</th>
+          </tr>
+        </thead>
+        <tbody id="r-rows">
+          <!-- rows injected -->
+        </tbody>
+      </table>
+
+      <div class="receipt-totals">
+        <div>USD Spent: <strong id="r-usd-spent">—</strong></div>
+        <div>BTC Spent: <strong id="r-btc-spent">—</strong></div>
+        <div>BTC Remaining: <strong id="r-btc-left">—</strong></div>
+        <div>USD Remaining: <strong id="r-usd-left">—</strong></div>
+      </div>
+
+      <footer class="receipt-actions">
+        <button id="print-receipt" class="btn">Print</button>
+      </footer>
+    </article>
+  </dialog>
 
   <script src="satoshi.js"></script>
 </body>
