@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Media · lloki</title>
+
+  <link rel="icon" type="image/png" href="/favicon.png?v=3" />
+  <link rel="stylesheet" href="media.css" />
+</head>
+<body>
+  <header class="media-header">
+    <h1>Media Player</h1>
+    <p>Watch & listen together — curated video and playlist experience.</p>
+    <p><a href="/">← Back to home</a></p>
+  </header>
+
+  <main class="media-layout">
+    <section class="video-section">
+      <div id="player"></div>
+    </section>
+    <section class="audio-section">
+      <iframe 
+        src="https://open.spotify.com/embed/playlist/3eG8Ulg1ixwU3DPpdgnnGi?utm_source=generator"
+        width="100%" height="380" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"></iframe>
+    </section>
+  </main>
+
+  <script>
+    const YT_VIDEO_ID = "vrOQDW6yTFI"; // This video ID can be changed later
+  </script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="media.js"></script>
+</body>
+</html>
+
+
