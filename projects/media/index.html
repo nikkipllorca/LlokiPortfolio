@@ -15,23 +15,25 @@
     <p><a href="/">← Back to home</a></p>
   </header>
 
-  <main class="media-layout">
-    <section class="video-section">
-      <div id="player"></div>
-    </section>
-    <section class="audio-section">
-      <iframe 
-        src="https://open.spotify.com/embed/playlist/3eG8Ulg1ixwU3DPpdgnnGi?utm_source=generator"
-        width="100%" height="380" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"></iframe>
-    </section>
-  </main>
+<main class="media-layout">
+  <section class="video-section">
+    <div id="ytPlayer"></div>
+  </section>
+  <section class="audio-section">
+    <iframe 
+      src="https://open.spotify.com/embed/playlist/3eG8Ulg1ixwU3DPpdgnnGi?utm_source=generator"
+      width="100%" height="380" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"></iframe>
+  </section>
+</main>
 
-  <script>
-    const YT_VIDEO_ID = "vrOQDW6yTFI"; // This video ID can be changed later
-  </script>
-  <script src="https://www.youtube.com/iframe_api"></script>
-  <script src="media.js"></script>
+<!-- keep these at the bottom of body -->
+<script>
+  const YT_VIDEO_ID = "vrOQDW6yTFI";
+</script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="media.js"></script>
+
 </body>
 </html>
 
