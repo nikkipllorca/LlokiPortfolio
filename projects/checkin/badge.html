@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Verified Visit · lloki</title>
+  <link rel="icon" href="/favicon.png?v=5" />
+  <style>
+    body{margin:0;background:#0d1117;color:#c9d1d9;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;display:grid;place-items:center;min-height:100svh}
+    .card{background:#161b22;border:1px solid #30363d;border-radius:16px;padding:24px;max-width:560px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    .muted{color:#8b949e}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+    .btn{background:#58a6ff;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer}
+    .btn-ghost{background:transparent;border:1px solid #30363d;color:#c9d1d9}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>✅ Verified Visit</h1>
+    <p id="desc" class="muted"></p>
+    <div class="row">
+      <button id="copyLink" class="btn">Copy badge link</button>
+      <a href="/" class="btn-ghost">Home</a>
+    </div>
+    <p class="muted" style="margin-top:12px">Tip: add this link to your LinkedIn “Featured” or share it in messages.</p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    let payload = null;
+    try{
+      payload = JSON.parse(decodeURIComponent(escape(atob(token))));
+    }catch(e){}
+
+    const el = document.getElementById('desc');
+    if (payload){
+      const when = new Date(payload.ts).toLocaleString();
+      el.textContent = `${payload.name || 'Candidate'} checked in for ${payload.role} at ${payload.venue} on ${when}.`;
+    } else {
+      el.textContent = 'Badge token missing or invalid.';
+    }
+
+    document.getElementById('copyLink').addEventListener('click', ()=>{
+      navigator.clipboard.writeText(location.href);
+      alert('Badge link copied');
+    });
+  </script>
+</body>
+</html>

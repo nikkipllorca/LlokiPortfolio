@@ -1,0 +1,67 @@
+[
+  {
+    "id": "industry",
+    "venue": "Industry",
+    "lat": 30.26390,
+    "lon": -97.72880,
+    "radius_m": 200,
+    "industry": "restaurant",
+    "roles": [
+      { "id": "server", "title": "Server", "tags": ["customer service","POS","multi-tasking"] },
+      { "id": "bartender", "title": "Bartender", "tags": ["mixology","cash handling","inventory"] }
+    ],
+    "last_updated": "2025-10-11"
+  },
+  {
+    "id": "brewbrew",
+    "venue": "The Brew & Brew",
+    "lat": 30.26550,
+    "lon": -97.73430,
+    "radius_m": 200,
+    "industry": "cafe",
+    "roles": [
+      { "id": "barista", "title": "Barista", "tags": ["espresso","latte art","customer service"] },
+      { "id": "shift-lead", "title": "Shift Lead", "tags": ["management","cash handling"] }
+    ],
+    "last_updated": "2025-10-11"
+  },
+  {
+    "id": "cloudflare",
+    "venue": "Cloudflare",
+    "lat": 30.26470,
+    "lon": -97.73100,
+    "radius_m": 250,
+    "industry": "tech",
+    "roles": [
+      { "id": "office-manager", "title": "Office Manager", "tags": ["admin","operations","vendor management"] },
+      { "id": "support-engineer", "title": "Support Engineer", "tags": ["troubleshooting","networking","customer support"] }
+    ],
+    "last_updated": "2025-10-11"
+  },
+  {
+    "id": "ramen-tatsuya",
+    "venue": "Ramen Tatsu-Ya",
+    "lat": 30.26330,
+    "lon": -97.72440,
+    "radius_m": 220,
+    "industry": "restaurant",
+    "roles": [
+      { "id": "line-cook", "title": "Line Cook", "tags": ["prep","knife skills","teamwork"] },
+      { "id": "host", "title": "Host", "tags": ["greeting","seating","customer service"] }
+    ],
+    "last_updated": "2025-10-11"
+  },
+  {
+    "id": "atlassian",
+    "venue": "Atlassian",
+    "lat": 30.26380,
+    "lon": -97.72980,
+    "radius_m": 250,
+    "industry": "tech",
+    "roles": [
+      { "id": "recruiter", "title": "Recruiter", "tags": ["sourcing","interviewing","ATS"] },
+      { "id": "facilities", "title": "Facilities Coordinator", "tags": ["vendor management","building ops","admin"] }
+    ],
+    "last_updated": "2025-10-11"
+  }
+]
