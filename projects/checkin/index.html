@@ -4,99 +4,160 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Check-In · lloki</title>
-  <meta name="description" content="IRL check-ins and quick matches for East 5th venues. Generate a verified visit badge and get a tailored resume outline." />
-  <link rel="icon" href="/favicon.png?v=5" />
-  <link rel="stylesheet" href="checkin.css?v=1" />
+  <meta name="description" content="IRL check-ins and skill matches for East 5th venues. Save your experience, get matches, verify your visit, and generate tailored resume/CV." />
+  <link rel="icon" href="/favicon.png?v=6" />
+  <link rel="stylesheet" href="checkin.css?v=2" />
 </head>
 <body>
-  <header class="site-header">
-    <h1>IRL Check-In (East 5th)</h1>
-    <p class="muted">See local roles, get a quick match score, and verify your visit — no account needed.</p>
+  <header class="site-header neon-edge">
+    <div class="brand">
+      <h1>IRL Check-In</h1>
+      <p class="muted">East 5th · Retro Neon Edition</p>
+    </div>
     <nav><a href="/">← Home</a></nav>
   </header>
 
   <main class="grid">
-    <!-- Profile / resume intake -->
-    <section class="card">
-      <h2>Your profile</h2>
-      <form id="profileForm" autocomplete="on">
-        <label>Name<input name="name" type="text" placeholder="Nikki Llorca" /></label>
-        <label>Email (for badge/digest)<input name="email" type="email" placeholder="you@example.com" /></label>
-        <label>Headline / Target role<input name="headline" type="text" placeholder="Bartender · FOH · Events" /></label>
+    <!-- PROFILE -->
+    <section class="card glow">
+      <h2>Profile</h2>
+      <form id="profileForm" autocomplete="on" class="stack">
+        <div class="row">
+          <label class="flex1">Name
+            <input name="name" type="text" placeholder="Nikki Llorca" />
+          </label>
+          <label class="flex1">Email (for badge/digest)
+            <input name="email" type="email" placeholder="you@example.com" />
+          </label>
+        </div>
+        <label>Headline / target role
+          <input name="headline" type="text" placeholder="Bartender · FOH · Events" />
+        </label>
         <label>Top skills (comma-separated)
           <input name="skills" type="text" placeholder="mixology, POS, cash handling, customer service" />
         </label>
         <div class="row">
-          <button type="button" id="saveProfile" class="btn">Save profile</button>
-          <button type="button" id="loadProfile" class="btn-ghost">Load saved</button>
-          <button type="button" id="clearProfile" class="btn-ghost">Clear</button>
+          <button type="button" id="saveProfile" class="btn neon">Save profile</button>
+          <button type="button" id="loadProfile" class="btn ghost">Load saved</button>
+          <button type="button" id="clearProfile" class="btn ghost">Clear</button>
         </div>
+        <div class="hint">Stored locally on your device.</div>
       </form>
-      <div class="hint">We store this locally in your browser (no account).</div>
     </section>
 
-    <!-- Location + venues -->
-    <section class="card">
+    <!-- EXPERIENCE (inline expanding cards) -->
+    <section class="card glow">
+      <div class="row between">
+        <h2>Your Experience</h2>
+        <div class="row">
+          <button type="button" id="addExp" class="btn neon">+ Add experience</button>
+          <button type="button" id="exportProfile" class="btn ghost" title="Creates Save Code + downloads JSON">Create Save Code</button>
+          <label class="btn ghost filelike" title="Load your saved JSON">
+            Load Save File<input id="importProfile" type="file" accept=".json" hidden>
+          </label>
+        </div>
+      </div>
+
+      <div id="expList" class="stack"></div>
+
+      <template id="expTpl">
+        <details class="exp-card">
+          <summary class="exp-head">
+            <span class="exp-title">(new role)</span>
+            <span class="exp-dates"></span>
+          </summary>
+          <div class="exp-form stack">
+            <div class="row">
+              <label class="flex1">Employer<input class="exp-employer" type="text" placeholder="Venue / Company"></label>
+              <label class="flex1">Role<input class="exp-role" type="text" placeholder="Bartender"></label>
+            </div>
+            <div class="row">
+              <label class="flex1">Start (YYYY-MM)<input class="exp-start" type="month"></label>
+              <label class="flex1">End (YYYY-MM or blank for current)<input class="exp-end" type="month"></label>
+              <label class="flex1">City<input class="exp-city" type="text" placeholder="Austin, TX"></label>
+            </div>
+            <label>Bullets (one per line)
+              <textarea class="exp-bullets" rows="4" placeholder="Handled 150+ covers/shift…&#10;Reduced spillage 12%…"></textarea>
+            </label>
+            <label>Skills used (comma-separated)
+              <input class="exp-skills" type="text" placeholder="mixology, POS, inventory">
+            </label>
+            <div class="row end">
+              <button type="button" class="btn ghost exp-delete">Delete</button>
+            </div>
+          </div>
+        </details>
+      </template>
+    </section>
+
+    <!-- LOCATION -->
+    <section class="card glow">
       <h2>Location</h2>
       <div class="row">
-        <button id="getLocation" class="btn">Use my location</button>
+        <button id="getLocation" class="btn neon">Use my location</button>
         <span id="locStatus" class="muted"></span>
       </div>
       <details class="mt8">
         <summary>How check-in works</summary>
         <ol>
-          <li>We compare your location to a venue’s radius (≈200m).</li>
-          <li>If you’re in range, you can generate a <strong>Verified Visit</strong> badge.</li>
-          <li>Optionally submit to our Netlify Form so venues can see interest.</li>
+          <li>We compare your position to a venue radius (≈200–250m).</li>
+          <li>If in range, you can generate a <strong>Verified Visit</strong> badge.</li>
+          <li>Optionally submit your interest (Netlify Forms).</li>
         </ol>
       </details>
     </section>
 
-    <!-- Matches -->
-    <section class="card">
-      <h2>Matches nearby</h2>
-      <div id="matchFilters" class="row">
-        <label class="inline">Show: 
-          <select id="minScore">
-            <option value="0.5">Likely (≥50%)</option>
-            <option value="0.7" selected>Strong (≥70%)</option>
-            <option value="0.85">Top (≥85%)</option>
-          </select>
-        </label>
-        <button id="findMatches" class="btn">Find matches</button>
+    <!-- MATCHES -->
+    <section class="card glow">
+      <div class="row between">
+        <h2>Matches</h2>
+        <div class="row">
+          <label class="inline">Threshold
+            <select id="minScore">
+              <option value="0.5">Likely (≥50%)</option>
+              <option value="0.7" selected>Strong (≥70%)</option>
+              <option value="0.85">Top (≥85%)</option>
+            </select>
+          </label>
+          <button id="findMatches" class="btn neon">Find matches</button>
+        </div>
       </div>
       <div id="matches" class="stack"></div>
     </section>
 
-    <!-- Heuristic templater -->
-    <section class="card">
-      <h2>Tailored resume outline</h2>
-      <p class="muted">Pick a role above to generate an outline and a ready-to-copy AI prompt.</p>
+    <!-- RESUME/CV (locked until Save Code exists) -->
+    <section class="card glow">
+      <div class="row between">
+        <h2>Tailored Résumé / CV</h2>
+        <span id="lockBadge" class="lock badge">🔒 Locked — create a Save Code to unlock</span>
+      </div>
+      <p class="muted">Select a role from Matches to enable generation.</p>
       <div class="row">
-        <button id="genOutline" class="btn" disabled>Generate outline</button>
-        <button id="copyPrompt" class="btn-ghost" disabled>Copy AI prompt</button>
+        <button id="genOutline" class="btn neon" disabled>Generate outline</button>
+        <button id="copyPrompt" class="btn ghost" disabled>Copy AI prompt</button>
       </div>
       <pre id="outline" class="pre"></pre>
       <div id="copyToast" class="toast" hidden>Prompt copied ✓</div>
     </section>
 
-    <!-- Email digest opt-in -->
-    <section class="card">
-      <h2>Get daily matches by email</h2>
-      <!-- Netlify Forms: creates a submission we can pipe to Zapier for a daily digest -->
-      <form name="digest" method="POST" data-netlify="true" class="stack">
+    <!-- EMAIL DIGEST -->
+    <section class="card glow">
+      <h2>Daily email digest</h2>
+      <form name="digest" method="POST" data-netlify="true" class="row wrap">
         <input type="hidden" name="form-name" value="digest" />
-        <label>Email for daily digest<input type="email" name="email" required placeholder="you@example.com" /></label>
-        <button type="submit" class="btn">Subscribe</button>
+        <label class="flex1">Email
+          <input type="email" name="email" id="digestEmail" required placeholder="you@example.com" />
+        </label>
+        <button type="submit" class="btn neon">Subscribe</button>
       </form>
-      <div class="hint">We’ll send one email per day (if there are new matches). Unsubscribe anytime.</div>
+      <div class="hint">One email/day if there are new strong matches. Unsubscribe anytime.</div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <small class="muted">Privacy: resume stays on your device. Check-ins/digest go to our Netlify forms. No precise location stored server-side.</small>
+    <small class="muted">Privacy: your profile & experience live in your browser. Creating a Save Code downloads a JSON you control. Check-ins/digest go to Netlify Forms.</small>
   </footer>
 
-  <script src="checkin.js?v=1"></script>
+  <script src="checkin.js?v=2"></script>
 </body>
 </html>
