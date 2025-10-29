@@ -1,4 +1,3 @@
-<!-- FILE: projects/task-breakdown/script.js -->
 // Utility
 const uid = () => Math.random().toString(36).slice(2,9);
 const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
