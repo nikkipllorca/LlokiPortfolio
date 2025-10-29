@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recursive Task Breakdown</title>
+  <style>
+    :root{
+      --bg: #0f1115;
+      --card: #161a22;
+      --ink: #e7ecf2;
+      --muted: #9aa4b2;
+      --accent: #5cc8ff;
+      --accent-2: #9b6cff;
+      --good: #78e08f;
+      --warn: #ffcc66;
+      --danger: #ff6b6b;
+      --gap: 10px;
+      --radius: 16px;
+      --base-font: 18px; /* starting font size for root task */
+      --min-font: 10px;  /* readable threshold */
+      --depth-scale: 0.85; /* font shrink per depth */
+      --tap: 44px; /* minimum tap size */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: var(--bg); color: var(--ink);
+      display:flex; flex-direction:column;
+    }
+    header{
+      padding: 10px clamp(12px, 3vw, 28px);
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      border-bottom:1px solid #222834;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+      position:sticky; top:0; z-index:5;
+    }
+    header h1{font-size:clamp(16px, 3vw, 22px); margin:0; font-weight:700; letter-spacing:.2px}
+    header .spacer{flex:1}
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap}
+    button, .button{
+      background:#1d2330; color:var(--ink); border:1px solid #2a3140; border-radius:10px; padding:10px 12px; cursor:pointer; min-height:var(--tap);
+      display:inline-flex; align-items:center; gap:8px; font-weight:600; transition:transform .05s ease, background .2s ease, border-color .2s ease; user-select:none;
+    }
+    button:hover{background:#222a3a}
+    button:active{transform:translateY(1px)}
+    button.primary{background: linear-gradient(180deg, #233047, #1e2638); border-color:#334258}
+    button.warn{border-color: #5a4930; background: linear-gradient(180deg, #2b2417, #221d13); color:#ffd28a}
+    button.danger{border-color:#5a3030; background: linear-gradient(180deg, #2b1717, #221313); color:#ffadad}
+    .toggle{gap:6px}
+    .toggle input{accent-color: var(--accent)}
+
+    #app{
+      flex:1; padding: clamp(8px, 1.5vw, 16px);
+      display:grid; place-items:stretch; place-content:stretch;
+    }
+
+    /* Task grid container */
+    .task{
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 2px solid #2a3140;
+      position:relative; overflow:hidden; display:flex; flex-direction:column;
+      transition: border-color .2s ease, background .2s ease, transform .15s ease;
+      min-height: 120px;
+    }
+    .task.completed{opacity:.6; filter:saturate(.6);}
+
+    .task:hover{border-color:#3a4457}
+    .task .task-head{
+      display:flex; gap:8px; align-items:center; padding:10px; border-bottom:1px dashed #2a3140;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+    }
+    .task .depth{font-variant-numeric: tabular-nums; font-size:12px; color:var(--muted); padding:2px 6px; border:1px solid #2a3140; border-radius:999px}
+    .task input.title{
+      flex:1; background:transparent; color:var(--ink); border:none; outline:none; font-weight:700;
+      font-size: var(--title-size, 16px);
+      min-height: var(--tap);
+    }
+    .task .actions{display:flex; gap:6px; align-items:center}
+    .task .actions .group{display:flex; gap:6px}
+    .task .actions .grid-choice{display:none; position:absolute; top:40px; right:10px; background:#10141c; border:1px solid #2a3140; border-radius:10px; padding:6px; z-index:2}
+    .task .actions .grid-choice button{min-width:60px}
+
+    .task .task-grid{
+      display:grid; gap: var(--gap); padding: var(--gap);
+      grid-template-columns: 1fr; /* dynamic via inline style */
+      flex:1; align-content:stretch; align-items:stretch; justify-items:stretch;
+    }
+
+    /* Visual hierarchy: thicker border for shallow depth */
+    .task[data-depth="0"]{border-width:3px}
+    .task[data-depth="1"]{border-width:3px}
+    .task[data-depth="2"]{border-width:2px}
+    .task[data-depth="3"]{border-width:2px}
+    .task[data-depth="4"]{border-width:1.5px}
+
+    /* Subtle background shifts by depth */
+    .task[data-depth="0"]{background: #131824}
+    .task[data-depth="1"]{background: #151a28}
+    .task[data-depth="2"]{background: #171c2c}
+    .task[data-depth="3"]{background: #151a28}
+    .task[data-depth="4"]{background: #131824}
+
+    /* Parent chain highlight */
+    .task.highlight{outline: 2px solid var(--accent); outline-offset:-2px}
+
+    /* Leaf body */
+    .leaf-body{flex:1; display:flex; padding:12px; align-items:center; justify-content:center; text-align:center}
+    .leaf-body .leaf-text{ width:100%; word-break: break-word; white-space:pre-wrap; line-height:1.2; font-weight:600; }
+
+    /* Small helpers */
+    .chip{padding:2px 6px; border-radius:999px; font-size:11px; border:1px solid #2a3140; color:var(--muted)}
+
+    /* Print styles */
+    @media print{
+      header, .no-print{display:none !important}
+      body{background:white; color:black}
+      .task{break-inside: avoid; border-color:#999; background:white}
+      .leaf-body .leaf-text{color:black}
+    }
+
+    /* Hide completed toggle */
+    .hide-completed .task.completed{display:none}
+
+    /* Accessibility focus */
+    button:focus-visible, input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+    /* Modal */
+    dialog{ border:1px solid #2a3140; border-radius:16px; background:#0e1219; color:var(--ink); padding:16px; max-width:420px }
+    dialog::backdrop{ background: rgba(0,0,0,.6) }
+    dialog form{display:flex; gap:10px; justify-content:flex-end; margin-top:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Recursive Task Breakdown</h1>
+    <div class="spacer"></div>
+    <div class="toolbar">
+      <button id="newRoot" class="primary" title="Start fresh root task">➕ New Root</button>
+      <label class="button toggle" title="Toggle completed visibility">
+        <input type="checkbox" id="toggleCompleted" checked /> Show Completed
+      </label>
+      <button id="exportJSON" title="Download your tasks as JSON">⬇️ Export JSON</button>
+      <button id="screenshot" class="no-print" title="Capture a PNG screenshot">📸 Screenshot</button>
+      <button id="print" title="Open print dialog">🖨️ Print</button>
+      <button id="clearAll" class="danger" title="Erase everything">🗑️ Clear All</button>
+    </div>
+  </header>
+
+  <main id="app" aria-live="polite" aria-busy="false"></main>
+
+  <dialog id="confirmClear">
+    <h3>Clear all tasks?</h3>
+    <p>This will remove all tasks from this device. You cannot undo this.</p>
+    <form method="dialog">
+      <button value="cancel">Cancel</button>
+      <button value="ok" class="danger">Delete</button>
+    </form>
+  </dialog>
+
+  <script>
+  // -------------------------
+  // Utility helpers
+  // -------------------------
+  const uid = () => Math.random().toString(36).slice(2,9);
+  const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+
+  // -------------------------
+  // Persistence
+  // -------------------------
+  const STORAGE_KEY = 'taskGridV1';
+  const loadState = () => {
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){
+      console.warn('localStorage load failed', e);
+      return null;
+    }
+  }
+  const saveState = (state) => {
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){
+      console.warn('localStorage save failed', e);
+      alert('Could not save (storage full or disabled). Your changes may not persist.');
+    }
+  }
+
+  // -------------------------
+  // App State
+  // -------------------------
+  const MAX_DEPTH = 5;
+  const MIN_FONT = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-font')) || 10;
+  const DEPTH_SCALE = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--depth-scale')) || 0.85;
+
+  let state = loadState() || {
+    root: {
+      id: uid(), title: 'Tap or click to rename me', completed:false, depth:0, gridSize:1, children: []
+    },
+    showCompleted: true
+  };
+
+  // -------------------------
+  // Rendering
+  // -------------------------
+  const app = document.getElementById('app');
+
+  function computeFontSize(depth){
+    const base = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--base-font')) || 18;
+    const size = base * Math.pow(DEPTH_SCALE, depth);
+    return Math.round(size);
+  }
+
+  function canBreakDown(node){
+    if(node.completed) return false;
+    if(node.depth >= MAX_DEPTH) return false;
+    const nextFont = computeFontSize(node.depth+1);
+    return nextFont >= MIN_FONT;
+  }
+
+  function render(){
+    document.body.classList.toggle('hide-completed', !state.showCompleted);
+    app.innerHTML = '';
+    const rootEl = renderTask(state.root);
+    // Root should occupy full viewport area
+    rootEl.style.minHeight = 'calc(100dvh - 80px)';
+    app.appendChild(rootEl);
+    saveState(state);
+  }
+
+  function renderTask(node){
+    const taskEl = document.createElement('section');
+    taskEl.className = 'task'+(node.completed?' completed':'');
+    taskEl.dataset.id = node.id; taskEl.dataset.depth = node.depth;
+    taskEl.style.setProperty('--title-size', computeFontSize(node.depth)+ 'px');
+
+    // Head
+    const head = document.createElement('div'); head.className='task-head';
+    const depthChip = document.createElement('span'); depthChip.className='depth'; depthChip.textContent = `Depth ${node.depth}`;
+
+    const title = document.createElement('input'); title.className='title'; title.value = node.title; title.setAttribute('aria-label','Task title');
+    title.addEventListener('change', e=>{ node.title = title.value.trim()||'Untitled'; render(); });
+
+    const actions = document.createElement('div'); actions.className='actions';
+
+    const complete = document.createElement('label'); complete.className='button'; complete.title='Mark complete';
+    const cbox = document.createElement('input'); cbox.type='checkbox'; cbox.checked = !!node.completed;
+    cbox.addEventListener('change', ()=>{ node.completed = cbox.checked; render(); });
+    complete.append('✅', cbox, document.createTextNode(' Done'));
+
+    // Breakdown button with grid choice popover
+    const canSplit = canBreakDown(node);
+    const splitBtn = document.createElement('button');
+    splitBtn.disabled = !canSplit; splitBtn.title = canSplit? 'Break down into subtasks':'Too small to split further';
+    splitBtn.textContent = '🔀 Break down';
+
+    const choice = document.createElement('div'); choice.className='grid-choice';
+    const two = document.createElement('button'); two.textContent='2×2';
+    const three = document.createElement('button'); three.textContent='3×3';
+    [two,three].forEach(b=>b.addEventListener('click', (ev)=>{
+      ev.stopPropagation(); choice.style.display='none';
+      const sz = b===two?2:3;
+      doBreakdown(node, sz);
+    }));
+    choice.append(two, three);
+
+    splitBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      if(!canSplit) return;
+      // quick chooser near the button
+      choice.style.display = choice.style.display==='block' ? 'none' : 'block';
+    });
+
+    const actionsGroup = document.createElement('div'); actionsGroup.className='group';
+    actionsGroup.append(splitBtn);
+
+    actions.append(complete, actionsGroup, choice);
+
+    head.append(depthChip, title, actions);
+    taskEl.append(head);
+
+    // Body
+    if(node.children && node.children.length){
+      const grid = document.createElement('div'); grid.className='task-grid';
+      const cols = node.gridSize; grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      // Render children
+      node.children.forEach(child=> grid.appendChild(renderTask(child)) );
+      taskEl.append(grid);
+    }else{
+      const body = document.createElement('div'); body.className='leaf-body';
+      const text = document.createElement('div'); text.className = 'leaf-text';
+      text.style.fontSize = `clamp(${MIN_FONT}px, ${computeFontSize(node.depth)}px, 5vw)`;
+      text.textContent = node.title;
+      body.append(text);
+      taskEl.append(body);
+      // clicking body toggles grid choice for faster mobile use
+      body.addEventListener('click', ()=>{ if(canBreakDown(node)) doBreakdown(node, 2); });
+      body.addEventListener('contextmenu', (e)=>{ e.preventDefault(); if(canBreakDown(node)) doBreakdown(node, 3); });
+    }
+
+    // Hover chain highlight (desktop)
+    taskEl.addEventListener('mouseenter', ()=> highlightChain(node.id, true));
+    taskEl.addEventListener('mouseleave', ()=> highlightChain(node.id, false));
+
+    return taskEl;
+  }
+
+  function highlightChain(id, on){
+    // Walk DOM up by data-depth reducing
+    let el = app.querySelector(`[data-id="${id}"]`);
+    while(el){
+      el.classList.toggle('highlight', on);
+      // find parent by looking for closest ancestor with smaller depth
+      const d = parseInt(el.dataset.depth||'0');
+      if(d===0) break;
+      el = el.parentElement?.closest(`.task[data-depth="${d-1}"]`) || null;
+    }
+  }
+
+  function doBreakdown(node, gridSize){
+    if(!canBreakDown(node)) return;
+    const cells = gridSize*gridSize;
+    node.gridSize = gridSize;
+    node.children = Array.from({length: cells}, (_,i)=> ({
+      id: uid(), title: `${node.title} – ${i+1}`, completed:false, depth: node.depth+1, gridSize:1, children: []
+    }));
+    render();
+  }
+
+  // -------------------------
+  // Toolbar actions
+  // -------------------------
+  document.getElementById('newRoot').addEventListener('click', ()=>{
+    state.root = { id: uid(), title: 'New Goal', completed:false, depth:0, gridSize:1, children: [] };
+    render();
+  });
+
+  document.getElementById('toggleCompleted').addEventListener('change', (e)=>{
+    state.showCompleted = e.target.checked; render();
+  });
+
+  document.getElementById('exportJSON').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'task-breakdown.json'; a.click(); URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById('print').addEventListener('click', ()=> window.print());
+
+  document.getElementById('clearAll').addEventListener('click', ()=>{
+    const dlg = document.getElementById('confirmClear');
+    dlg.showModal();
+    dlg.addEventListener('close', function onClose(){
+      dlg.removeEventListener('close', onClose);
+      if(dlg.returnValue === 'ok'){
+        localStorage.removeItem(STORAGE_KEY);
+        state = { root: { id: uid(), title:'Start here', completed:false, depth:0, gridSize:1, children:[] }, showCompleted:true };
+        render();
+      }
+    });
+  });
+
+  // Screenshot via html2canvas (optional, loads on-demand)
+  document.getElementById('screenshot').addEventListener('click', async ()=>{
+    // load library only when needed
+    if(!window.html2canvas){
+      try{
+        await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+      }catch(e){
+        alert('Screenshot feature requires network access to load html2canvas.');
+        return;
+      }
+    }
+    const target = document.getElementById('app');
+    const canvas = await window.html2canvas(target, { backgroundColor: '#ffffff', scale: 2 });
+    const link = document.createElement('a'); link.download = 'task-breakdown.png'; link.href = canvas.toDataURL('image/png'); link.click();
+  });
+
+  function loadScript(src){
+    return new Promise((resolve, reject)=>{
+      const s = document.createElement('script'); s.src = src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);
+    });
+  }
+
+  // Prevent rapid interaction spam
+  let clickLock=false;
+  document.addEventListener('click', ()=>{ if(clickLock) return; clickLock=true; setTimeout(()=>clickLock=false, 120); }, true);
+
+  // Handle resize: re-render to let CSS recompute sizes & clamp
+  window.addEventListener('resize', debounce(render, 100));
+  function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a), ms); } }
+
+  // Initialize
+  render();
+  </script>
+</body>
+</html>
+
