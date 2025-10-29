@@ -1,39 +1,38 @@
 :root{
---bg: #0f1115;
---card: #161a22;
---ink: #e7ecf2;
---muted: #9aa4b2;
---accent: #5cc8ff;
---danger: #ff6b6b;
---gap: 10px;
---radius: 16px;
---base-font: 16px; /* smaller base for tight mobile */
---min-font: 10px; /* readable threshold */
---depth-scale: 0.85; /* font shrink per depth */
---tap: 44px; /* minimum tap size */
+  --bg: #0f1115;
+  --card: #161a22;
+  --ink: #e7ecf2;
+  --muted: #9aa4b2;
+  --accent: #5cc8ff;
+  --danger: #ff6b6b;
+  --gap: 10px;
+  --radius: 16px;
+  --base-font: 16px;
+  --min-font: 10px;
+  --depth-scale: 0.85;
+  --tap: 44px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-background: var(--bg); color: var(--ink);
-display:grid; grid-template-rows: 10dvh 1fr 5dvh; min-height:100dvh;
+  margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: var(--bg); color: var(--ink);
+  display:grid; grid-template-rows: 10dvh 1fr 5dvh; min-height:100dvh;
 }
 
-
 header{
-padding: 6px clamp(8px, 2vw, 16px);
-display:flex; gap:6px; align-items:center; flex-wrap:wrap;
-border-bottom:1px solid #222834;
-background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
-overflow:hidden; /* prevent card scrolling under header */
+  padding: 6px clamp(8px, 2vw, 16px);
+  display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+  border-bottom:1px solid #222834;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+  overflow:hidden;
 }
 header h1{font-size:clamp(14px, 2.6vw, 18px); margin:0; font-weight:700; letter-spacing:.2px; white-space:nowrap}
 header .spacer{flex:1; min-width: 8px}
 .toolbar{display:flex; gap:6px; flex-wrap:wrap}
 button, .button{
-background:#1d2330; color:var(--ink); border:1px solid #2a3140; border-radius:10px; padding:8px 10px; cursor:pointer; min-height:var(--tap);
-display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; transition:transform .05s ease, background .2s ease, border-color .2s ease; user-select:none;
+  background:#1d2330; color:var(--ink); border:1px solid #2a3140; border-radius:10px; padding:8px 10px; cursor:pointer; min-height:var(--tap);
+  display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; transition:transform .05s ease, background .2s ease, border-color .2s ease; user-select:none;
 }
 button:hover{background:#222a3a}
 button:active{transform:translateY(1px)}
@@ -42,22 +41,20 @@ button.danger{border-color:#5a3030; background: linear-gradient(180deg, #2b1717,
 .toggle{gap:6px}
 .toggle input{accent-color: var(--accent)}
 
-
 main#app{
-min-height: 0; /* allow grid child to size without overflow */
-overflow:auto; /* scroll only main area */
-padding: clamp(6px, 1.5vw, 12px);
-display:grid; align-items:stretch; align-content:stretch;
+  min-height: 0;
+  overflow:auto;
+  padding: clamp(6px, 1.5vw, 12px);
+  display:grid; align-items:stretch; align-content:stretch;
 }
-
 
 /* Task card */
 .task{
-background: var(--card);
-border-radius: var(--radius);
-border: 2px solid #2a3140;
-position:relative; overflow:hidden; display:flex; flex-direction:column;
-min-height: 100%;
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 2px solid #2a3140;
+  position:relative; overflow:hidden; display:flex; flex-direction:column;
+  min-height: 100%;
 }
 .task.completed{opacity:.6; filter:saturate(.6)}
 .task .task-head{display:flex; gap:6px; align-items:center; padding:8px; border-bottom:1px dashed #2a3140}
@@ -65,13 +62,47 @@ min-height: 100%;
 .task input.title{flex:1; background:transparent; color:var(--ink); border:none; outline:none; font-weight:700; font-size: var(--title-size, 14px); min-height: var(--tap);}
 .task .actions{display:flex; gap:6px; align-items:center}
 
-
 .task .task-grid{display:grid; gap: var(--gap); padding: var(--gap); grid-template-columns: 1fr; flex:1; align-content:stretch; align-items:stretch; justify-items:stretch;}
-
 
 /* Depth visuals */
 .task[data-depth="0"]{border-width:3px;background:#131824}
 .task[data-depth="1"]{border-width:3px;background:#151a28}
 .task[data-depth="2"]{border-width:2px;background:#171c2c}
 .task[data-depth="3"]{border-width:2px;background:#151a28}
+.task[data-depth="4"]{border-width:1.5px;background:#131824}
+
+.task.highlight{outline: 2px solid var(--accent); outline-offset:-2px}
+
+.leaf-body{flex:1; display:flex; padding:10px; align-items:center; justify-content:center; text-align:center}
+.leaf-body .leaf-text{ width:100%; word-break: break-word; white-space:pre-wrap; line-height:1.2; font-weight:600; }
+
+/* Hide completed toggle */
+.hide-completed .task.completed{display:none}
+
+/* Footer (5% area) */
+footer{ display:flex; align-items:center; justify-content:center; gap:18px; border-top:1px solid #222834; font-size:13px; background:rgba(255,255,255,0.02); }
+footer a{color:#9ecbff; text-decoration:none}
+
+/* Modal form */
+dialog{ border:1px solid #2a3140; border-radius:14px; background:#0e1219; color:var(--ink); padding:16px; max-width:520px; width:92vw }
+dialog::backdrop{ background: rgba(0,0,0,.6) }
+form.task-form{display:grid; gap:10px}
+.row{display:grid; gap:6px}
+input[type="text"], textarea, input[type="range"]{width:100%; background:#121826; border:1px solid #2a3140; color:var(--ink); border-radius:10px; padding:10px}
+textarea{min-height:90px; resize:vertical}
+.ranges{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+.confirm-bar{position:relative; margin-top:6px; padding-top:8px}
+.confirm-bar::before{content:""; position:absolute; left:0; right:0; top:0; height:1px; background:#2a3140}
+.confirm-actions{display:flex; justify-content:space-between}
+.confirm-actions .mini{min-height:36px; padding:6px 10px; font-size:12px}
+
+/* Accessibility focus */
+button:focus-visible, input:focus-visible, textarea:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+/* Print styles */
+@media print{
+  header, footer {display:none !important}
+  body{grid-template-rows:auto 1fr auto}
+  .task{break-inside: avoid; border-color:#999; background:white; color:black}
+  .leaf-body .leaf-text{color:black}
 }

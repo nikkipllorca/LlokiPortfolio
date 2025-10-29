@@ -1,78 +1,72 @@
-<!-- FILE: projects/task-breakdown/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Recursive Task Breakdown</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recursive Task Breakdown</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<header>
-<h1>Recursive Task Breakdown</h1>
-<div class="spacer"></div>
-<div class="toolbar">
-<button id="newRoot" class="primary" title="Start fresh root task">➕ New</button>
-<label class="button toggle" title="Toggle completed visibility">
-<input type="checkbox" id="toggleCompleted" checked /> Show Done
-</label>
-<button id="screenshot" title="Capture a PNG screenshot">📸 Shot</button>
-<button id="clearAll" class="danger" title="Erase everything">🗑️ Clear</button>
-</div>
-</header>
+  <header>
+    <h1>Recursive Task Breakdown</h1>
+    <div class="spacer"></div>
+    <div class="toolbar">
+      <button id="newRoot" class="primary" title="Start fresh root task">➕ New</button>
+      <label class="button toggle" title="Toggle completed visibility">
+        <input type="checkbox" id="toggleCompleted" checked /> Show Done
+      </label>
+      <button id="screenshot" title="Capture a PNG screenshot">📸 Shot</button>
+      <button id="clearAll" class="danger" title="Erase everything">🗑️ Clear</button>
+    </div>
+  </header>
 
+  <main id="app" aria-live="polite" aria-busy="false"></main>
 
-<main id="app" aria-live="polite" aria-busy="false"></main>
+  <footer>
+    <a href="/">Home</a>
+    <a href="/about.html">About</a>
+  </footer>
 
+  <!-- Clear confirm -->
+  <dialog id="confirmClear">
+    <h3>Clear all tasks?</h3>
+    <p>This will remove all tasks from this device. You cannot undo this.</p>
+    <div class="confirm-actions">
+      <button id="cancelClear" class="mini">✖ Cancel</button>
+      <button id="okClear" class="danger mini">Delete</button>
+    </div>
+  </dialog>
 
-<footer>
-<a href="/">Home</a>
-<a href="/about.html">About</a>
-</footer>
+  <!-- Edit/Create form -->
+  <dialog id="taskForm">
+    <form method="dialog" class="task-form" id="taskFormEl">
+      <div class="row">
+        <label for="tf_title">Title</label>
+        <input type="text" id="tf_title" required placeholder="e.g., Research APIs" />
+      </div>
+      <div class="row">
+        <label for="tf_desc">Description</label>
+        <textarea id="tf_desc" placeholder="Add helpful notes..."></textarea>
+      </div>
+      <div class="ranges">
+        <div class="row">
+          <label for="tf_diff">Difficulty: <span id="tf_diff_val">3</span></label>
+          <input type="range" id="tf_diff" min="1" max="5" value="3" />
+        </div>
+        <div class="row">
+          <label for="tf_pri">Priority: <span id="tf_pri_val">1</span></label>
+          <input type="range" id="tf_pri" min="1" max="1" value="1" />
+        </div>
+      </div>
+      <div class="confirm-bar">
+        <div class="confirm-actions">
+          <button value="cancel" class="mini">✖ Cancel</button>
+          <button value="ok" class="mini primary">✅ Save</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
 
-
-<!-- Clear confirm -->
-<dialog id="confirmClear">
-<h3>Clear all tasks?</h3>
-<p>This will remove all tasks from this device. You cannot undo this.</p>
-<div class="confirm-actions">
-<button id="cancelClear" class="mini">✖ Cancel</button>
-<button id="okClear" class="danger mini">Delete</button>
-</div>
-</dialog>
-
-
-<!-- Edit/Create form -->
-<dialog id="taskForm">
-<form method="dialog" class="task-form" id="taskFormEl">
-<div class="row">
-<label for="tf_title">Title</label>
-<input type="text" id="tf_title" required placeholder="e.g., Research APIs" />
-</div>
-<div class="row">
-<label for="tf_desc">Description</label>
-<textarea id="tf_desc" placeholder="Add helpful notes..."></textarea>
-</div>
-<div class="ranges">
-<div class="row">
-<label for="tf_diff">Difficulty: <span id="tf_diff_val">3</span></label>
-<input type="range" id="tf_diff" min="1" max="5" value="3" />
-</div>
-<div class="row">
-<label for="tf_pri">Priority: <span id="tf_pri_val">1</span></label>
-<input type="range" id="tf_pri" min="1" max="1" value="1" />
-</div>
-</div>
-<div class="confirm-bar">
-<div class="confirm-actions">
-<button value="cancel" class="mini">✖ Cancel</button>
-<button value="ok" class="mini primary">✅ Save</button>
-</div>
-</div>
-</form>
-</dialog>
-
-
-<script src="script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
