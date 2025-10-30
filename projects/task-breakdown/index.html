@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,10 +12,16 @@
     <div class="spacer"></div>
     <div class="toolbar">
       <button id="newRoot" class="primary" title="Start fresh root task">➕ New</button>
+
       <label class="button toggle" title="Toggle completed visibility">
         <input type="checkbox" id="toggleCompleted" checked /> Show Done
       </label>
-      <button id="screenshot" title="Capture a PNG screenshot">📸 Shot</button>
+
+      <label class="button toggle" title="Switch theme light/dark">
+        <input type="checkbox" id="toggleTheme" /> Light
+      </label>
+
+      <button id="screenshot" title="Open a live preview you can screenshot">👀 Preview</button>
       <button id="clearAll" class="danger" title="Erase everything">🗑️ Clear</button>
     </div>
   </header>
@@ -67,6 +73,17 @@
     </form>
   </dialog>
 
+  <!-- Screenshot Preview -->
+  <dialog id="shotPreview">
+    <div class="preview-head">
+      <h3>Screenshot Preview</h3>
+      <button id="closePreview" class="mini">Close</button>
+    </div>
+    <p class="preview-tip">Tip: On mobile, long-press the image to save or just take a system screenshot.</p>
+    <div id="previewBody" class="preview-body"></div>
+  </dialog>
+
   <script src="./script.js"></script>
 </body>
 </html>
+

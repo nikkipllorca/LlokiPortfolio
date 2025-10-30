@@ -4,8 +4,11 @@ const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
 
 // Persistence
 const STORAGE_KEY = 'taskGridV2';
+const THEME_KEY = 'theme';
 const loadState = () => { try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } };
 const saveState = (s) => { try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }catch(e){ alert('Could not save (storage full or disabled).'); } };
+const loadTheme = () => localStorage.getItem(THEME_KEY) || 'dark';
+const saveTheme = (t) => { try{ localStorage.setItem(THEME_KEY, t); }catch(e){} };
 
 // App State
 const MAX_DEPTH = 5;
@@ -70,6 +73,16 @@ function renderTask(node){
 
   actions.append(doneLbl, editBtn, splitBtn);
 
+  // If node is split, add an inline "× Unsplit" action to revert
+  if (node.children && node.children.length) {
+    const unsplitBtn = document.createElement('button');
+    unsplitBtn.className = 'unsplit';
+    unsplitBtn.title = 'Cancel split and revert this card';
+    unsplitBtn.textContent = '× Unsplit';
+    unsplitBtn.addEventListener('click', (e)=>{ e.stopPropagation(); doUnsplit(node); });
+    actions.append(unsplitBtn);
+  }
+
   head.append(depthChip, title, actions);
   el.append(head);
 
@@ -118,6 +131,13 @@ function doBreakdown(node){
   render();
 }
 
+// Unsplit: remove children and revert to leaf
+function doUnsplit(node){
+  node.children = [];
+  node.gridCols = 1;
+  render();
+}
+
 // Form modal (create/edit)
 const dlg = document.getElementById('taskForm');
 const form = document.getElementById('taskFormEl');
@@ -153,26 +173,42 @@ dlg.addEventListener('close', ()=>{
   } else { editingNode = null; }
 });
 
-// Toolbar
+// Toolbar buttons
 document.getElementById('newRoot').addEventListener('click', ()=>{
   state.root = { id: uid(), title: 'New Goal', desc:'', diff:3, pri:1, completed:false, depth:0, gridCols:1, children: [] };
   render();
 });
 document.getElementById('toggleCompleted').addEventListener('change', (e)=>{ state.showCompleted = e.target.checked; render(); });
 
-// Screenshot (lazy-load html2canvas)
+// Theme
+const themeToggle = document.getElementById('toggleTheme');
+const applyTheme = (t)=>{ document.documentElement.setAttribute('data-theme', t); saveTheme(t); themeToggle.checked = (t==='light'); };
+applyTheme(loadTheme());
+themeToggle.addEventListener('change', ()=> applyTheme(themeToggle.checked ? 'light' : 'dark'));
+
+// Screenshot Preview (no download)
+const shotDlg = document.getElementById('shotPreview');
+const shotBody = document.getElementById('previewBody');
+document.getElementById('closePreview').addEventListener('click', ()=> shotDlg.close());
+
 document.getElementById('screenshot').addEventListener('click', async ()=>{
+  // lazy-load html2canvas for crisp preview
   if(!window.html2canvas){
     try{
       await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
     }catch(e){
-      alert('Screenshot needs network access to load html2canvas.');
+      alert('Preview needs network access to load html2canvas.');
       return;
     }
   }
   const target = document.getElementById('app');
-  const canvas = await window.html2canvas(target, { backgroundColor: '#ffffff', scale: 2 });
-  const link = document.createElement('a'); link.download = 'task-breakdown.png'; link.href = canvas.toDataURL('image/png'); link.click();
+  const canvas = await window.html2canvas(target, { backgroundColor: getComputedStyle(document.body).backgroundColor, scale: 2 });
+  shotBody.innerHTML = '';
+  const img = document.createElement('img');
+  img.alt = 'Task preview';
+  img.src = canvas.toDataURL('image/png');
+  shotBody.appendChild(img);
+  shotDlg.showModal();
 });
 
 // Clear all
@@ -189,4 +225,5 @@ function loadScript(src){ return new Promise((res,rej)=>{ const s=document.creat
 
 // Initialize
 render();
+
 
